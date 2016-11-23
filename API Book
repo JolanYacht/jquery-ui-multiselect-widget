@@ -1,0 +1,175 @@
+Eric Hynds
+← all posts
+jQuery UI MultiSelect Widget
+
+Tuesday, July 06, 2010
+
+This is the successor and port of my original jQuery MultiSelect Plugin to a jQuery UI widget. While both will actively be maintained, I highly recommend you use this version over the plugin version. It has a more robust feature set, is faster, and is much more flexible. MultiSelect turns an ordinary HTML select control into an elegant drop down list of checkboxes with themeroller support.
+
+This version inherits all the benefits from the jQuery UI widget factory that are not available in the plugin version. The most requested feature was the ability to call methods on instances after initialization (e.g., statefullness), and now there are 10 to choose from! Also present are eight events you can bind to, which in the previous version, had fewer and limited support. Finally, there is support for effects. Just include the jQuery UI effects dependency and specify the name of the opening or closing effect to use (and speed, if you wish!)
+
+Current version: 1.13 (08/19/2012 - changelog)
+View demos.
+Download source or minified, and the CSS file.
+Follow this project on GitHub.
+Run the unit tests.
+Please report any bugs on the issue tracker.
+Demo
+
+
+See what you're missing out on? Many more demos are available here.
+
+Usage
+
+Using this widget is simple. First, include the following files:
+
+jQuery 1.4.2+
+jQuery UI 1.8 widget factory and effects (if you'd like to use them)
+A jQuery UI theme
+This widget: jquery.multiselect.js
+The CSS file: jquery.multiselect.css
+Next construct a standard multiple select box. Do not forget the multiple attribute:
+
+<select id="example" name="example" multiple="multiple">
+<option value="1">Option 1</option>
+<option value="2">Option 2</option>
+<option value="3">Option 3</option>
+<option value="4">Option 4</option>
+<option value="5">Option 5</option>
+</select>
+Finally, initialize the widget on the select box once the document is ready:
+
+$(document).ready(function(){
+   $("#example").multiselect();
+});
+See the demos for advanced usages and for more documentation!
+
+Options
+
+To further customize multiselect, pass in a object with one or more of the options below.
+
+// example:
+$("select").multiselect({
+   header: "Choose an Option!"
+});
+Option	Description	Default
+header	Either a boolean value denoting whether or not to display the header, or a string value. If you pass a string, the default "check all", "uncheck all", and "close" links will be replaced with the specified text.	true
+height	Height of the checkbox container (scroll area) in pixels. If set to "auto", the height will calculate based on the number of checkboxes in the menu.	175
+minWidth	Minimum width of the entire widget in pixels. Setting to "auto" will disable.	225
+checkAllText	The text of the "check all" link.	Check all
+uncheckAllText	The text of the "uncheck all" link.	Uncheck All
+noneSelectedText	The default text the select box when no options have been selected.	Select options
+selectedText	The text to display in the select box when options are selected (if selectedList is false). A pound sign (#) will automatically replaced by the number of checkboxes selected. If two pound signs are present in this parameter, the second will be replaced by the total number of checkboxes available. Example: "# of # checked". This parameter also accepts an anonymous function with three arguments: the number of checkboxes checked, the total number of checkboxes, and an array of the checked checkbox DOM elements. See examples for usage.	# selected
+selectedList	A numeric (or boolean to disable) value denoting whether or not to display the checked opens in a list, and how many. A number greater than 0 denotes the maximum number of list items to display before switching over to the selectedText parameter. A value of 0 or false is disabled.	false
+show	The name of the effect to use when the menu opens. To control the speed as well, pass in an array: ['slide', 500]	empty string
+hide	The name of the effect to use when the menu closes. To control the speed as well, pass in an array: ['explode', 500]	empty string
+autoOpen	A boolean value denoting whether or not to automatically open the menu when the widget is initialized.	false
+multiple	If set to false, the widget will use radio buttons instead of checkboxes, forcing users to select only one option.	true
+classes	New in 1.5! Additional class(es) to apply to BOTH the button and menu for further customization. Separate multiple classes with a space. You'll need to scope your CSS to differentiate between the button/menu: css /* button */ .ui-multiselect.myClass {} /* menu */ .ui-multiselect-menu.myClass {}	empty string
+position	New in 1.5! Requires jQuery 1.4.3+, jQuery UI position utility This option allows you to position the menu anywhere you'd like relative to the button; centered, above, below (default), etc. Also provides collision detection to flip the menu above the button when near the bottom of the window. If you do not set this option or if the position utility has not been included, the menu will open below the button. Requires the jQuery UI position utility and jQuery 1.4.3+. Please see this demo for usage instructions.	empty object
+Events
+
+Hook into any of the events below by either binding to the event name, or passing in the name of the event during initialization:
+
+// bind to event
+$("#multiselect").bind("multiselectopen", function(event, ui){
+    // event handler here
+});
+
+// or pass in the handler during initialization
+$("#multiselect").multiselect({
+    open: function(event, ui){
+        // event handler here
+    }
+});
+Event	Description
+create	Requires jQuery UI Widget Factory 1.8.6+ Fires when the widget is created for the first time.
+beforeopen	Fires right before the menu opens. Prevent the menu from opening by returning false in the handler.
+open	Fires after the widget opens.
+beforeclose	Fires right before the menu closes. Prevent the menu from closing by returning false in the handler.
+close	Fires after the widget closes.
+checkall	Fires when all the options are checked by either clicking the "check all" link in the header, or when the "checkall" method is programatically called (see next section).
+uncheckall	Fires when all the options are all unchecked by either clicking the "uncheck all" link in the header, or when the "uncheckall" method is programatically called (see next section).
+optgrouptoggle	Fires when an optgroup label is clicked on. This event receives the original event object as the first argument, and a hash of values as the second argument: js $("#multiselect").bind("multiselectoptgrouptoggle", function(event, ui){ /* event: the original event object, most likely "click" ui.inputs: an array of the checkboxes (DOM elements) inside the optgroup ui.label: the text of the optgroup ui.checked: whether or not the checkboxes were checked or unchecked in the toggle (boolean) */ });
+click	Fires when a checkbox is checked or unchecked. js $("#multiselect").on("multiselectclick", function(event, ui) { /* event: the original event object ui.value: value of the checkbox ui.text: text of the checkbox ui.checked: whether or not the input was checked or unchecked (boolean) */ });
+Methods
+
+After an instance has been initialized, interact with it by calling any of these methods:
+
+// example:
+$("#multiselect").multiselect("method_name");
+Method	Description
+open	Opens the menu.
+close	Closes the menu.
+refresh	Reloads the checkbox menu. If you're dynamically adding/removing option tags on the original select via AJAX or DOM manipulation methods, call refresh to reflect the changes in the widget.
+disable	Disable the entire widget.
+enable	Enable the entire widget.
+checkAll	Check all checkboxes.
+uncheckAll	Uncheck all checkboxes.
+isOpen	Returns a boolean denoting if the widget is currently open or not.
+getChecked	Returns an array of all the checked checkboxes.
+getButton	New in 1.13! Returns the button element.
+widget	Returns the menu container (all checkboxes inside).
+option	Set or get one of the options after the widget has been initialized. If changing an option, the new option setting will take affect immediately.
+destroy	Destroy the widget, and revert back to the original select box.
+Filter Plugin
+
+A filtering widget is available which, once initialized on a multiselect instance, will insert a text box inside the widget header. Typing in the input will filter rows and return matches in real time. To view a demo, download, or read the documentation, head to the demo page.
+
+How do I...?
+
+These questions came out of the comments which others will probably find useful:
+
+Set default options for all multiselect instances?
+
+The options object is located in $.ech.multiselect.prototype.options. To configure options that all new instances will inherit, it's easier to set them in this object instead of on an instance-by-instance basis.
+
+$.ech.multiselect.prototype.options.selectedText = "# of # selected";
+Retrieve all selected values?
+
+The easiest way is to call val() on the select box:
+
+var values = $("select").val();
+The same can be accomplished using the multiselect API. Call the getChecked method and map a new array:
+
+var array_of_checked_values = $("select").multiselect("getChecked").map(function(){
+   return this.value;    
+}).get();
+Retrieve values on the server?
+
+Depends on your server-side language. In PHP et. al., you may need to name your select with square brackets on the end so the values can be captured as an array. I will probably wind up implementing this as an option at some point so it'll degrade a bit better.
+
+Prevent the selectedList option from increasing the button's height?
+
+Open up the CSS file and edit the .ui-multiselect declaration.
+
+.ui-multiselect { height:25px; overflow-x:hidden; padding:2px 0 2px 4px; text-align:left }
+The height you'll need to set depends on the font size and padding you use, so it may need adjusting.
+
+Manually check or uncheck a checkbox?
+
+The checkboxes can be accessed after calling the "widget" method. Simply manually trigger the NATIVE click event on them:
+
+// manually check (or uncheck) the third checkbox in the menu:
+$("select").multiselect("widget").find(":checkbox").each(function(){
+   this.click();
+});
+The native click event must be used (trigger('click') will not work) due to this bug in jQuery's core.
+
+All necessary events and actions, like updating the button value, will automatically fire.
+
+Alternatively, you could give the original option tag the selected attribute, and then call MultiSelect's refresh method.
+
+Show checked values on another part of my page?
+
+See this demo: http://jsfiddle.net/ehynds/rTjkr/
+
+Use multiselect in conjunction with the validate plugin?
+
+Make sure you're using version 1.7 of the validation plugin; 1.6 is NOT supported with either this plugin or jQuery version 1.4.2+. Validate 1.6 defines its own "delegate" method which conflicts with the method added in jQuery. The conflict was resolved in Validate 1.7.
+
+Issues
+
+If you find any issues, please report them using the GitHub issue tracker. Thanks!
+
+comments powered by Disqus
