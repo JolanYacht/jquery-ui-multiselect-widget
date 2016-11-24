@@ -228,7 +228,28 @@
         this._trigger('refresh');
       }
     },
+	//set option be checked 
+	setChecked: function(val){
+		var $input = this.menu.find('input[value='+val+']').eq(0),
+		self = this;
 
+		if(!$input) null;
+		$input.each(this._toggleState('checked', true));
+		$input.focus();
+		this.update();
+
+		this.element
+		.find('option')
+		.each(function(){
+		if( !this.disabled && this.value == val ){
+		self._toggleState('selected', true).call( this );
+		}
+		});
+		this.element.trigger("change");
+		$input.closest('label').toggleClass('ui-state-active', true );
+		return $input;
+		},
+		
     // updates the button text. call refresh() to rebuild
     update: function() {
       var o = this.options;
@@ -553,8 +574,9 @@
       if($inputs.length) {
         this.element.trigger("change");
       }
+	  $inputs.closest('label').toggleClass('ui-state-active', flag );//add by hql
     },
-
+	
     _toggleDisabled: function(flag) {
       this.button.prop({ 'disabled':flag, 'aria-disabled':flag })[ flag ? 'addClass' : 'removeClass' ]('ui-state-disabled');
 
@@ -784,3 +806,4 @@
   });
 
 })(jQuery);
+
